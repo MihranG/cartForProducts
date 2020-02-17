@@ -1,25 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect} from 'react';
+import {connect} from 'react-redux';
+import {Switch, Route, BrowserRouter, Link} from "react-router-dom";
+import {Provider} from "react-redux";
+import {store} from "./store/store";
+import {getItems} from './store/thunks'
+
+import {AppBar, Toolbar, Typography, IconButton , Button} from "@material-ui/core";
+import {makeStyles} from "@material-ui/core/styles";
+
+import Home from './Home';
+import Header from "./Header";
+
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Header/>
+        <Switch>
+          <Route exact path="/" component={Home}/>
+          {/*<Route path="/cart" component={Cart}/>*/}
+          {/*<Route path="*" component= {Home}/>*/}
+        </Switch>
+      </BrowserRouter >
+    </Provider>
   );
 }
 
