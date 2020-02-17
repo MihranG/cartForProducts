@@ -3,10 +3,17 @@ import { combineReducers } from "redux";
 
 const productsSlice = createSlice({
     name: 'products',
-    initialState: {data:[], isLoading: false},
+    initialState: {data:{}, isLoading: false},
     reducers: {
         setProducts(state, action){
-            state.data = action.payload
+            state.data = action.payload.reduce((acc,el)=>{
+                acc[el.productID] = el;
+                return acc
+            },{})
+        },
+        editProduct(state, action){
+            const {id, newFields} = action.payload;
+            state.data[id] = {...state.data[id], ...newFields}
         },
         deleteProducts(state, action){
             state.data = []
@@ -20,19 +27,32 @@ const productsSlice = createSlice({
 
 const cartSlice = createSlice({
     name: 'cart',
-    initialState : {},
+    initialState : {data:{}},
     reducers: {
         addProductToCart(state,action){
-            const {id, product} = action.payload;
-            state[id] = product
+            const {id} = action.payload;
+            if(state.data[id]){
+                state.data[id]++
+            }else{
+                state.data[id] = 1
+            }
+        },
+        removeProductFromCart(state,action){
+            const {id} = action.payload;
+            if(state.data[id] && state.data[id]>1){
+                state.data[id]--
+            }else if(state.data[id]){
+                delete state.data[id]
+            }else{
+                console.error('there is no such item in cart ')
+            }
         },
         editProduct(state, action){
-            const {id, productFields} = action.payload;
-            state[id] = {...state[id], productFields};
+            const {id, newQty} = action.payload;
+            state.data[id] = newQty;
         },
         deleteProduct(state, action){
-            const {id} = action.payload;
-            delete state[id]
+            delete state.data[action.payload]
         }
     }
 });
@@ -54,14 +74,13 @@ const rootReducer = combineReducers({
     products: productsSlice.reducer,
     cart: cartSlice.reducer,
 });
-console.log('rootReducer', rootReducer, configureStore({reducer: rootReducer}))
 
 export const store = configureStore({reducer: rootReducer});
 
 export const {
-    actions: {setProducts, deleteProducts, setLoading}
+    actions: {setProducts, deleteProducts, setLoading, editProduct}
 } = productsSlice;
 
 export const {
-    actions: {addProductToCart, editProduct, deleteProduct}
+    actions: {addProductToCart, deleteProduct,removeProductFromCart }
 } = cartSlice;

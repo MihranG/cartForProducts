@@ -6,8 +6,7 @@ export const getItems = ()=>{
         return ()=> fetch('https://private-3efa8-products123.apiary-mock.com/products').then(res=>
             res.json()
         ).then(data=>{
-            console.log('data', data);
-            dispatch(setProducts(data.products))
+            dispatch(setProducts(data.products));
             return data
         }).catch(e =>{
             console.error(e)

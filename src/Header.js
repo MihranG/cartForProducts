@@ -19,11 +19,12 @@ const useStyles = makeStyles(theme=>({
 }));
 
 
-const Header = ({cartItems, getProducts}) =>{
+const Header = ({cartItemsQty, getProducts, history}) =>{
     const classes = useStyles();
     useEffect(()=>{
         getProducts();
     },[])
+
     return( <div className={classes.root}>
         <AppBar position="static">
             <Toolbar>
@@ -36,8 +37,12 @@ const Header = ({cartItems, getProducts}) =>{
                     Top 5
                 </Typography>
                 <IconButton aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={cartItems.length} color="secondary">
-                        <Typography variant='h6' color="inherit">Cart</Typography>
+                    <Badge badgeContent={cartItemsQty} color="secondary">
+                        <Link to={'/cart'} style={{textDecoration: 'none'}}>
+                            <Typography variant='h6' color="inherit">
+                                Cart
+                            </Typography>
+                        </Link>
                     </Badge>
                 </IconButton>
 
@@ -46,11 +51,9 @@ const Header = ({cartItems, getProducts}) =>{
     </div>)
 };
 
-const mapStateToProps = (state)=>{
-    console.log('44', state);
-    return({
-    cartItems: Object.values(state.cart)
-})};
+const mapStateToProps = (state)=> ({
+    cartItemsQty: Object.values(state.cart.data).reduce((acc,el)=>acc+el,0)
+});
 
 const mapDispatchToProps = dispatch =>({
     getProducts: dispatch(getItems())
